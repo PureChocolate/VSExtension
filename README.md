@@ -1,37 +1,74 @@
-# VSExtend
+# VSExtension
 
-Personal Discord Rich Presence for Visual Studio (v17/v18, SDK 17.x API).
+Discord Rich Presence for Visual Studio. Shows the active file, project, solution, git branch,
+working-tree state, debug state, and the caret position on your Discord profile — built as a
+self-contained, fully editable VSIX extension (no runtime dependencies beyond Discord itself).
 
-Shows: active file, project, solution, git branch, modified-file count, debug state and an elapsed timer.
-No buttons, no URLs, no GitHub links.
+## Features
 
-## First-time setup
+- Active document, project, and solution shown in the presence state
+- Git branch and modified-file count (plain text; repository paths are never sent)
+- Debug mode indicator with a dedicated icon while a debug session is active
+- Cursor position (line/column), refreshed via a lightweight watcher
+- Per-language file icons rendered from the asset pack, with a fallback icon
+- Per-session elapsed timer
+- Debounced updates with reconnection handling (survives Discord restarts)
+- No buttons / no URL fields: nothing in the presence is clickable
 
-1. **Discord app** (done): discord.com/developers/applications -> your app -> copy the numeric Application ID.
-2. **Icons**: `python tools/build_icons.py` (needs `pip install resvg-py`, python >= 3.10).
-   Produces `assets_pack/*.png` (1024x1024, key name = asset key). Upload **all** of them in
-   discord.com/developers/applications -> your app -> Rich Presence -> Art Assets
-   (image names must stay the same as the file names; Discord lowercases them, which matches already).
-3. **Build/run**: open `VSExten.sln` in VS with the "Visual Studio extension development" workload,
-   press F5 (deploys to the Experimental instance).
-4. **Configure**: Tools > Options > **VSExtend > General**:
-   - Enabled: on
-   - Application ID: paste your ID
-   Then check the **VSExtend** pane in the Output window ("connected to Discord").
+## How it works
 
-Tools > **Discord Rich Presence** (toggle on the Tools menu) enables/disables at runtime.
+- In-proc VSSDK `AsyncPackage` (`net472`, VS SDK 17.x API — compatible with VS 2022 17.14+ and
+  VS 2026, per the VS extension compatibility model)
+- DTE2 events (window, document, solution, debugger, selection) feed a `PresenceContext`
+- `DiscordService` owns a `DiscordRpcClient` (DiscordRichPresence NuGet, MIT), debounces updates,
+  reconnects on pipe loss, and clears presence on shutdown
+- `GitService` shells out to `git` on a background thread, cached per solution
+- Settings are written from the Tools menu pop-up or the Tools > Options page and are stored
+  per-user in the Windows registry — never in the repository
+
+## Baseline install
+
+1. Create a Discord application at <https://discord.com/developers/applications> and copy the
+   application (client) ID. Optionally set an application name and icon there — that is the text
+   and icon Discord displays next to "Playing".
+2. Build and install the VSIX:
+   - Open `VSExten.sln` in Visual Studio with the "Visual Studio extension development" workload
+     and press F5 (deploys to the Experimental instance), or build and run the generated
+     `VSExtend.vsix` from `src\VSExtend\bin\Debug\net472`.
+3. Run `python tools\build_icons.py` (requires `pip install resvg-py`, Python 3.10+) to produce
+   `assets_pack/*.png` (1024x1024), then upload every PNG under your application's
+   **Rich Presence → Art Assets** page. File names are the asset keys.
+4. Tools → **Discord Rich Presence Settings...** → paste the application ID.
+
+Check the **VSExtend** pane in the Output window for connection/diagnostic messages.
+
+## Project layout
+
+```
+src/VSExtend/
+  VSExtendPackage.cs        package lifecycle, DTE event wiring, commands
+  Options/                  Tools > Options page (DialogPage) + snapshot
+  Settings/                 WPF settings window (Tools menu pop-up)
+  Presence/                 DiscordService, PresenceBuilder, AssetMap, context
+  Git/                      GitService (branch, modified count)
+tools/
+  icons.json                asset key -> devicon slug mapping
+  build_icons.py            local rendering pipeline (resvg-py)
+  svg/                      hand-authored SVGs (latex, toml, bash, debugging)
+```
 
 ## Customization
 
-- File-type -> asset key mapping: `src/VSExtend/Presence/AssetMap.cs`
-- Presence text formatting: `src/VSExtend/Presence/PresenceBuilder.cs`
-- To add icons: add a key to `tools/icons.json`, put a `tools/svg/<key>.svg` or a devicon slug,
-  re-run `build_icons.py`, upload the new PNG, and map extensions to it in `AssetMap.cs`.
+- `src/VSExtend/Presence/AssetMap.cs` — file extension → asset key mapping
+- `src/VSExtend/Presence/PresenceBuilder.cs` — presence text layout
+- `tools/icons.json` + `tools/svg/` — asset pack contents; re-run `build_icons.py` after changes
+  and upload the new PNGs
 
-## Notes
+## Privacy
 
-- Git state is plain text only (branch, modified count) — repo paths are never sent.
-- `Debugging`/`Paused` small icon uses the `debugging` asset.
-- An icon that is not uploaded falls back to the generic `visualstudio` asset.
-- Your Discord Application ID is stored in the Windows registry (Tools > Options), never in
-  this repo — nothing secret gets committed here.
+Presence carries only text (file name, project/solution, branch, modified count, line/column)
+and asset keys. No repository paths, URLs, secrets, or clickable links are included.
+
+## License
+
+MIT.
