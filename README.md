@@ -68,7 +68,3 @@ tools/
 
 Presence carries only text (file name, project/solution, branch, modified count, line/column)
 and asset keys. No repository paths, URLs, secrets, or clickable links are included.
-
-## License
-
-MIT.
