@@ -1,0 +1,31 @@
+<Window x:Class="VSExtend.Settings.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VSExtend Settings"
+        Width="360"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+    <StackPanel Margin="12">
+        <CheckBox x:Name="chkEnabled" Content="Enable Discord rich presence" />
+        <TextBlock Text="Application ID" Margin="0,10,0,2" />
+        <TextBox x:Name="txtAppId" />
+        <GroupBox Header="Display" Margin="0,10,0,0">
+            <StackPanel Margin="8">
+                <CheckBox x:Name="chkFileIcons" Content="Use file type icons" />
+                <CheckBox x:Name="chkSolution" Content="Show solution name" />
+                <CheckBox x:Name="chkProject" Content="Show project name" />
+                <CheckBox x:Name="chkBranch" Content="Show git branch" />
+                <CheckBox x:Name="chkDirty" Content="Show modified file count" />
+                <CheckBox x:Name="chkDebug" Content="Show debug state" />
+                <CheckBox x:Name="chkElapsed" Content="Show elapsed time" />
+                <CheckBox x:Name="chkCursor" Content="Show cursor position (line/column)" />
+            </StackPanel>
+        </GroupBox>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button Content="OK" Width="80" IsDefault="True" Click="OnOk" Margin="0,0,8,0" />
+            <Button Content="Cancel" Width="80" IsCancel="True" />
+        </StackPanel>
+    </StackPanel>
+</Window>

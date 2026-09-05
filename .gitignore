@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+assets_pack/
+tools/devicon-src/
+__pycache__/
+*.pyc
+*.vsix
+.DS_Store

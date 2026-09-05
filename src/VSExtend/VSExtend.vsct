@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+  <Commands package="guidVSExtendPackage">
+    <Groups>
+      <Group guid="guidVSExtendCmdSet" id="VSExtendToolsGroup" priority="0x1000">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
+      </Group>
+    </Groups>
+    <Buttons>
+      <Button guid="guidVSExtendCmdSet" id="cmdidToggleRichPresence" priority="0x0100" type="Button">
+        <Parent guid="guidVSExtendCmdSet" id="VSExtendToolsGroup" />
+        <CommandFlag>TextOnly</CommandFlag>
+        <Strings>
+          <ButtonText>Discord Rich Presence</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidVSExtendCmdSet" id="cmdidOpenSettings" priority="0x0200" type="Button">
+        <Parent guid="guidVSExtendCmdSet" id="VSExtendToolsGroup" />
+        <CommandFlag>TextOnly</CommandFlag>
+        <Strings>
+          <ButtonText>Discord Rich Presence Settings...</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+  <Symbols>
+    <GuidSymbol name="guidVSExtendPackage" value="{3dcf0749-569f-4ba0-9c44-730c6e8498d0}" />
+    <GuidSymbol name="guidVSExtendCmdSet" value="{b3fc5b2e-357f-40f2-b04e-d243f50433a5}">
+      <IDSymbol name="VSExtendToolsGroup" value="0x1020" />
+      <IDSymbol name="cmdidToggleRichPresence" value="0x0100" />
+      <IDSymbol name="cmdidOpenSettings" value="0x0101" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
